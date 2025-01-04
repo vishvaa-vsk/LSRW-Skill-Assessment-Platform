@@ -22,6 +22,6 @@ class Config:
     MAIL_PORT = 465
     MAIL_USE_SSL = True
     MAIL_USERNAME = "testvec26@gmail.com"
-    MAIL_PASSWORD = "uuue qirf lwtf bouz"
+    MAIL_PASSWORD = os.environ.get('MAIL_PASSWORD')
     MAIL_DEFAULT_SENDER = 'testvec26@gmail.com' 
     UPLOAD_FOLDER = 'static/audios'

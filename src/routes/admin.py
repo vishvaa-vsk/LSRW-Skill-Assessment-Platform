@@ -192,7 +192,9 @@ def get_test_code():
                     "test_type":test_type,
                     "lab_session":lab_session,
                     "audio_no":audio_no,
-                    "questions_filename":questions_filename})
+                    "questions_filename":questions_filename,
+                    "available":True
+                    })
 
                     questions = extract_questions(os.path.join(os.path.abspath('Quiz-App/src/static/questions/'),questions_filename))
                     mongo.db[test_code].insert_many(questions)
