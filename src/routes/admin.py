@@ -550,3 +550,14 @@ def delete_result():
         return redirect(url_for("admin.technical_issues"))
     else:
         return redirect(url_for("admin.login"))
+    
+@admin.route("/change_course_name",methods=['GET', 'POST'])
+def change_course_name():
+    if check_login():
+        current_course= list(mongo.db.courseDetails.find({}))[0]["course_name"]
+        if request.method == "POST":
+            course_name = request.form.get("course_name")
+            mongo.db.courseDetails.update_one({},{"$set":{"course_name":course_name}})
+        return render_template("admin/course_name.html",current_course=current_course)
+    else:
+        return redirect(url_for("admin.login"))

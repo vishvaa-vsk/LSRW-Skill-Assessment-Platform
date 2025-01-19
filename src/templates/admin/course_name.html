@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Change Course Name</title>
+</head>
+<body>
+    <div class="form">
+        <h2>Current Course:- {{current_course}}</h2>
+        <form action="{{ url_for('admin.change_course_name') }}" method="post">
+            <select class="form-select" aria-label="Course Name" name="course_name">
+                <option selected>Choose a course name for this semester</option>
+                <option value="Communicative English Lab">Communicative English Lab</option>
+                <option value="Technical English Lab">Technical English Lab</option>
+              </select><br><br>
+              <button type="submit" class="btn btn-success">Change</button>
+              <br>
+              <a href="{{ url_for('admin.dashboard') }}">Back</a>
+        </form>
+    </div>
+</body>
+</html>

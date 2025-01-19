@@ -10,6 +10,8 @@ from ..send_email import send_report
 
 main = Blueprint("main",__name__)
 
+
+
 def check_login():
     """
     The function `check_login` attempts to verify if a user is logged in by checking if a user ID is
@@ -89,9 +91,10 @@ def dashboard():
     'studentDashboard.html' with the student's name passed as a parameter. If the user is not logged in,
     the function will redirect to the login page.
     """
+    current_course = list(mongo.db.courseDetails.find({}))[0]["course_name"]
     if check_login():
         studName = session['username']
-        return render_template('studentDashboard.html',studName=studName)
+        return render_template('studentDashboard.html',studName=studName,current_course=current_course)
     else:
         return redirect(url_for('main.login'))
 
@@ -268,7 +271,8 @@ def univ_exam():
     :return: The function `univ_exam()` is returning a call to the `render_template()` function with the
     parameters "univ_exam.html" and "studName = session.get("username")".
     """
-    return render_template("univ_exam.html",studName = session.get("username"))
+    current_course = list(mongo.db.courseDetails.find({}))[0]["course_name"]
+    return render_template("univ_exam.html",studName = session.get("username"),current_course=current_course)
 
 @main.route("/verify_univ_test/<testCode>",methods=['GET', 'POST'])
 def verify_univ_test(testCode):

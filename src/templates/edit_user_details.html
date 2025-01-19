@@ -1,4 +1,4 @@
-% extends "dashBase.html" %}
+{% extends "dashBase.html" %}
 
 {% block title %}VEC Quiz App{% endblock %}
 {% block customCSS %}
@@ -6,24 +6,6 @@
 {% endblock %}
 
 {% block dashContent %}
-    <div class="sidebar">
-        <div class="studBanner">
-            <img src="{{ url_for('static',filename='VEC-logo.png') }}" alt="logo" class="clgLogo">
-            <h6 class="studName">{{studName}}</h6>
-        </div>
-
-        <div class="d-flex justify-content-evenly">
-            <input type="text" name="testCode" id="testCode" placeholder="TEST CODE" onkeydown="writeTest(this)">
-            <button id="testButton" type="button" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#staticBackdrop">Go</button>    
-        </div>
-
-        <a href="{{ url_for('main.dashboard') }}">Dash Board</a>
-        <a href="{{ url_for('main.univ_exam') }}">Write University Exam</a>
-        <a href="{{ url_for('main.download_prev_result') }}">Download Previous Test Results</a>
-        <!-- <a href="{{ url_for('main.edit_details') }}" class="active">Edit Your Details</a> -->
-        <a href="{{ url_for('main.logout') }}" class="btn btn-danger">Logout</a>
-     </div>
-
 
   <div class="content">
     <h4>Edit Your Details</h4>
