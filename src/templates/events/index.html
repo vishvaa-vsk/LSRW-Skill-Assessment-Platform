@@ -17,7 +17,7 @@
     {% endfor %}
     <div class="ModelBox shadow-lg p-3 mb-5 rounded-3">
         <h3>Get Your Certificates</h3>
-        <form action="{{ url_for('main.signup') }}" method="POST">
+        <form action="{{ url_for('events.events_home') }}" method="POST">
               <div class="form-floating mb-3">
                 <input type="text" class="form-control" name="name" id="floatingInput" placeholder="Your Name" required>
                 <label for="floatingInput">Student Name (eg: Vishvaa K)</label>
@@ -77,6 +77,7 @@
                   <option value="Demo">Demo Event</option>
                 </select>
               </div>
+              <br>
             <button type="submit" class="btn btn-lg btn-primary">Download</button>
         </form>
     </div>
