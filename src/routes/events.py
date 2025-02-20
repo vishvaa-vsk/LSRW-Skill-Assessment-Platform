@@ -49,6 +49,7 @@ def events_home():
     if request.method == "POST":
         name,dept,regno = request.form["name"],request.form["dept"],request.form["regno"]
         event_name = request.form.get("event")
+        print(event_name)
         if not mongo.db.event_info.find_one({"event_name":event_name}):
             flash("Event does not exist")
         else:
