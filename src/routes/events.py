@@ -9,7 +9,10 @@ events = Blueprint("events",__name__,url_prefix="/events")
 
 
 def generate_certificate(name,dept,event_name,regno):
-    template = cv2.imread("./static/participation_certificate.png")
+    template_path = os.path.join(os.path.abspath("src/static/"), "participation_certificate.png")
+    template = cv2.imread(template_path)
+    if template is None:
+        raise FileNotFoundError(f"Template image not found at path: {template_path}")
     # Name
     text = name
     font = cv2.FONT_HERSHEY_COMPLEX
@@ -41,7 +44,7 @@ def generate_certificate(name,dept,event_name,regno):
     font_scale = 0.8
     thickness = 2
     cv2.putText(template, current_date, (1304, 1023), font, font_scale, color, thickness, cv2.LINE_AA)
-    cv2.imwrite(f"./static/certificates/{regno}.png", template)
+    cv2.imwrite(os.path.join(os.path.abspath("event_certificates/"),f"{regno}.png"),template)
 
 
 @events.route("/",methods=["GET","POST"])
@@ -49,15 +52,14 @@ def events_home():
     if request.method == "POST":
         name,dept,regno = request.form["name"],request.form["dept"],request.form["regno"]
         event_name = request.form.get("event")
-        print(event_name)
         if not mongo.db.event_info.find_one({"event_name":event_name}):
             flash("Event does not exist")
         else:
             generate_certificate(name,dept,event_name,regno)
-            return redirect(url_for("events.get_certificate",regno=regno))
+            return redirect(url_for("events.get_certificate",regno=regno,event=event_name))
     return render_template("events/index.html")
 
 @events.route("/get_certificate/<regno>")
-def get_certificate(regno):
-    path = os.path.join(os.path.abspath("Quiz-App/event_certificates/"),f"{regno}.png")
+def get_certificate(event,regno):
+    path = os.path.join(os.path.abspath("event_certificates/"),f"{event}_{regno}.png")
     return send_file(path,as_attachment=True)
