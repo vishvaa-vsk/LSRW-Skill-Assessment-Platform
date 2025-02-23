@@ -8,5 +8,5 @@ admin_reports/*
 .vscode
 src/static/questions/*
 *.pdf
-events_certificates/*
+event_certificates/*.png
 *.csv

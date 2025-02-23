@@ -57,3 +57,17 @@ The Communicative English Team
     thr = Thread(target=send_async_mail,args=[app,msg])
     thr.start()
     return thr
+
+def send_winner_email(userEmail,username,event_name,regno):
+    app = current_app._get_current_object()
+    msg = Message(f"Winner of {event_name}",sender='testvec26@gmail.com',recipients=[userEmail],)
+    msg.body = f"""Hi {username},
+Congratulations! You have won the {event_name} event. Your registration number is {regno}.
+Thank you,
+VEC Literacy Club
+"""
+    with current_app.open_resource(os.path.join(os.path.abspath("event_certificates/"),f"{event_name}_winner_{regno}.png")) as file:
+        msg.attach(f"{event_name}_winner_{regno}.png", "image/png", file.read())
+    thr = Thread(target=send_async_mail,args=[app,msg])
+    thr.start()
+    return thr

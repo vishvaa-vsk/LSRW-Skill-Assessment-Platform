@@ -17,6 +17,10 @@ from wtforms import StringField,SubmitField,FileField,IntegerField,SelectField
 from wtforms.validators import DataRequired,InputRequired
 from werkzeug.utils import secure_filename
 
+import cv2
+from datetime import datetime
+from ..send_email import send_winner_email
+
 admin = Blueprint("admin",__name__,url_prefix="/admin")
 
 gen_testCode = ''.join(random.sample(string.ascii_uppercase+string.digits,k=8))
@@ -561,3 +565,105 @@ def change_course_name():
         return render_template("admin/course_name.html",current_course=current_course)
     else:
         return redirect(url_for("admin.login"))
+    
+def winner_certificate(name,dept,event_name,regno,position):
+    template_path = os.path.join(os.path.abspath("src/static/"), "winners_certificate.png")
+    template = cv2.imread(template_path)
+    if template is None:
+        raise FileNotFoundError(f"Template image not found at path: {template_path}")
+    # Name
+    text = name
+    font = cv2.FONT_HERSHEY_COMPLEX
+    font_scale = 2
+    thickness = 5
+    color = (66, 154, 203)
+    (text_width, text_height), baseline = cv2.getTextSize(text, font, font_scale, thickness)
+    template_width = template.shape[1]
+    x = (template_width - text_width) // 2
+    y = 843
+    cv2.putText(template, text, (x, y), font, font_scale, color, thickness, cv2.LINE_AA)
+    # Department
+    font = cv2.FONT_HERSHEY_COMPLEX
+    font_scale = 1.3
+    thickness = 2
+    color = (66, 154, 203)
+    (text_width, text_height), baseline = cv2.getTextSize(dept, font, font_scale, thickness)
+    x = (template_width - text_width) // 2
+    y = 933
+    cv2.putText(template, dept, (x, y), font, font_scale, color, thickness, cv2.LINE_AA)
+    # Position
+    font = cv2.FONT_HERSHEY_COMPLEX
+    font_scale = 0.93
+    thickness = 3
+    color = (66, 154, 203)
+    cv2.putText(template, position, (966,1010), font, font_scale, color, thickness, cv2.LINE_AA)
+    # Event
+    font = cv2.FONT_HERSHEY_COMPLEX
+    font_scale = 0.8
+    thickness = 2
+    color = (66, 154, 203)
+    cv2.putText(template, event_name, (832,1070), font, font_scale, color, thickness, cv2.LINE_AA)
+    # Date
+    current_date = datetime.now().strftime("%d-%m-%Y")
+    font_scale = 0.8
+    thickness = 2
+    cv2.putText(template, current_date, (1169, 1074), font, font_scale, color, thickness, cv2.LINE_AA)
+    cv2.imwrite(os.path.join(os.path.abspath("event_certificates/"),f"{event_name}_winner_{regno}.png"),template)
+
+@admin.route("/generate_winner_certificate",methods=['GET', 'POST'])
+def generate_winner_certificate():
+    if check_login():
+        events = [event["event_name"] for event in mongo.db.event_info.find()]
+        if request.method == "POST":
+            name,dept,regno,email = request.form["name"],request.form["dept"],request.form["regno"],request.form["email"]
+            event_name = request.form.get("event")
+            position = request.form.get("position")
+            if not mongo.db.event_info.find_one({"event_name":str(event_name)}):
+                flash("Event does not exist")
+            else:
+                winner_certificate(name,dept,event_name,regno,position)
+                return redirect(url_for("admin.send_winner_certificate",email=email,name=name,regno=regno,event_name=event_name))
+        return render_template("admin/generate_winner_certificate.html",events=events)
+    else:
+        return redirect(url_for("admin.login"))
+    
+@admin.route("/send_winner_certificate/<email>/<name>/<regno>/<event_name>",methods=['GET', 'POST'])
+def send_winner_certificate(email,name,regno,event_name):
+    if check_login():
+        if os.path.isfile(os.path.join(os.path.abspath("event_certificates/"),f"{event_name}_winner_{regno}.png")):
+            send_winner_email(email,name,event_name,regno)
+            flash("Email sent successfully")
+        return "Email sent successfully"
+    else:
+        return redirect(url_for("admin.login"))
+    
+@admin.route("/add_event",methods=['GET', 'POST'])
+def add_event():
+    if check_login():
+        if request.method == "POST":
+            event_name = request.form.get("event_name")
+            event_status = request.form.get("event_status")
+            status = "active" if event_status=="on" else "inactive"
+            if not mongo.db.event_info.find_one({"event_name":str(event_name)}):
+                mongo.db.event_info.insert_one({"event_name":str(event_name),"event_status":str(status)})
+                flash("Event added successfully")
+            else:
+                flash("Event already exists!")
+        return render_template("admin/add_event.html")
+    else:
+        return redirect(url_for("admin.login"))
+    
+@admin.route("/revoke_event", methods=['GET', 'POST'])
+def revoke_event():
+    if check_login():
+        events = [event["event_name"] for event in mongo.db.event_info.find({"event_status": "active"})]
+        if request.method == "POST":
+            event_name = request.form.get("event_name")
+            if mongo.db.event_info.find_one({"event_name": event_name, "event_status": "active"}):
+                mongo.db.event_info.update_one({"event_name": event_name}, {"$set": {"event_status": "inactive"}})
+                flash("Event revoked successfully")
+            else:
+                flash("Event not found or already inactive")
+        return render_template("admin/revoke_event.html", events=events)
+    else:
+        return redirect(url_for("admin.login"))    

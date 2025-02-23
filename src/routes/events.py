@@ -49,6 +49,7 @@ def generate_certificate(name,dept,event_name,regno):
 
 @events.route("/",methods=["GET","POST"])
 def events_home():
+    events = [event["event_name"] for event in mongo.db.event_info.find()]
     if request.method == "POST":
         name,dept,regno = request.form["name"],request.form["dept"],request.form["regno"]
         event_name = request.form.get("event")
@@ -57,7 +58,7 @@ def events_home():
         else:
             generate_certificate(name,dept,event_name,regno)
             return redirect(url_for("events.get_certificate",regno=regno,event=event_name))
-    return render_template("events/index.html")
+    return render_template("events/index.html",events=events)
 
 @events.route("/get_certificate/<regno>")
 def get_certificate(event,regno):
