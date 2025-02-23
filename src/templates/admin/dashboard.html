@@ -53,65 +53,101 @@
     </nav>
 
     <h1 class="mx-5 mt-4">Welcome, {{name}} !</h1>
-    <div class="d-flex">
-
-        <div class="card border-warning text-bg-dark mb-3 m-5 " >
-            <h5 class="card-header">Create New Test</h5>
-            <div class="card-body ">
-              <p class="card-text" style="text-transform:capitalize;">Create a new test with click! <br><br> Enter the necessary details to quickly create a test!</p>
-              <a href="{{ url_for('admin.get_test_code') }}" class="btn btn-warning mt-3"> Create a test</a>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-6 col-lg-4 mb-4">
+                <div class="card border-warning text-bg-dark">
+                    <h5 class="card-header">Create New Test</h5>
+                    <div class="card-body">
+                        <p class="card-text">Create a new test with click! <br><br> Enter the necessary details to quickly create a test!</p>
+                        <a href="{{ url_for('admin.get_test_code') }}" class="btn btn-warning mt-3">Create a test</a>
+                    </div>
+                </div>
             </div>
-        </div>
-
-        <div class="card border-warning text-bg-dark mb-3 m-5 " style="max-width: 18rem;">
-            <h5 class="card-header">View University Reports</h5>
-            <div class="card-body ">
-              <p class="card-text" style="text-transform:capitalize;">View reports with a click! <br><br> View and download reports of individual user with their respective departments!</p>
-              <a href="{{ url_for('admin.show_univ_report') }}" class="btn btn-warning"> View University reports</a>
+            <div class="col-md-6 col-lg-4 mb-4">
+                <div class="card border-warning text-bg-dark">
+                    <h5 class="card-header">View University Reports</h5>
+                    <div class="card-body">
+                        <p class="card-text">View reports with a click! <br><br> View and download reports of individual user with their respective departments!</p>
+                        <a href="{{ url_for('admin.show_univ_report') }}" class="btn btn-warning">View University reports</a>
+                    </div>
+                </div>
             </div>
-        </div>
-
-        <div class="card border-warning text-bg-dark mb-3 m-5 " style="max-width: 18rem;">
-            <h5 class="card-header">View Model Reports</h5>
-            <div class="card-body ">
-              <p class="card-text" style="text-transform:capitalize;">View reports with a click! <br><br> View and download reports of individual user with their respective departments!</p>
-              <a href="{{ url_for('admin.show_model_report') }}" class="btn btn-warning"> View  Model Reports</a>
+            <div class="col-md-6 col-lg-4 mb-4">
+                <div class="card border-warning text-bg-dark">
+                    <h5 class="card-header">View Model Reports</h5>
+                    <div class="card-body">
+                        <p class="card-text">View reports with a click! <br><br> View and download reports of individual user with their respective departments!</p>
+                        <a href="{{ url_for('admin.show_model_report') }}" class="btn btn-warning">View Model Reports</a>
+                    </div>
+                </div>
             </div>
-        </div>
-
-        <div class="card border-warning text-bg-dark mb-3 m-5 " style="max-width: 18rem;">
-          <h5 class="card-header">View Lab Test Reports</h5>
-          <div class="card-body ">
-            <p class="card-text" style="text-transform:capitalize;">View reports with a click! <br><br> View and download reports of individual user with their respective departments!</p>
-            <a href="{{ url_for('admin.show_lab_report') }}" class="btn btn-warning"> View  Lab Test Reports</a>
-          </div>
-        </div>
-
-        <div class="card border-warning text-bg-dark mb-3 m-5 " style="max-width: 18rem;">
-          <h5 class="card-header">View testcodes</h5>
-          <div class="card-body ">
-            <p class="card-text" style="text-transform:capitalize;">View existing! <br><br> View existing testcode and its questions</p>
-            <a href="{{ url_for('admin.show_questions') }}" class="btn btn-warning"> View testcodes</a>
-          </div>
-        </div>
-
-        <div class="card border-warning text-bg-dark mb-3 m-5 " style="max-width: 18rem;">
-          <h5 class="card-header">Technical Issues</h5>
-          <div class="card-body ">
-            <p class="card-text" style="text-transform:capitalize;">Review Technical issues! <br><br> View technical issues and resolve it</p>
-            <a href="{{ url_for('admin.technical_issues') }}" class="btn btn-warning"> Review Technical Issues</a>
-          </div>
-        </div>
-
-        <div class="card border-warning text-bg-dark mb-3 m-5 " style="max-width: 18rem;">
-          <h5 class="card-header">Change Course Name</h5>
-          <div class="card-body ">
-            <p class="card-text" style="text-transform:capitalize;">Change the course name according to the syllabus.</p>
-            <a href="{{ url_for('admin.change_course_name') }}" class="btn btn-warning">Change Course Name</a>
-          </div>
+            <div class="col-md-6 col-lg-4 mb-4">
+                <div class="card border-warning text-bg-dark">
+                    <h5 class="card-header">View Lab Test Reports</h5>
+                    <div class="card-body">
+                        <p class="card-text">View reports with a click! <br><br> View and download reports of individual user with their respective departments!</p>
+                        <a href="{{ url_for('admin.show_lab_report') }}" class="btn btn-warning">View Lab Test Reports</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-4 mb-4">
+                <div class="card border-warning text-bg-dark">
+                    <h5 class="card-header">View testcodes</h5>
+                    <div class="card-body">
+                        <p class="card-text">View existing! <br><br> View existing testcode and its questions</p>
+                        <a href="{{ url_for('admin.show_questions') }}" class="btn btn-warning">View testcodes</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-4 mb-4">
+                <div class="card border-warning text-bg-dark">
+                    <h5 class="card-header">Technical Issues</h5>
+                    <div class="card-body">
+                        <p class="card-text">Review Technical issues! <br><br> View technical issues and resolve it</p>
+                        <a href="{{ url_for('admin.technical_issues') }}" class="btn btn-warning">Review Technical Issues</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-4 mb-4">
+                <div class="card border-warning text-bg-dark">
+                    <h5 class="card-header">Change Course Name</h5>
+                    <div class="card-body">
+                        <p class="card-text">Change the course name according to the syllabus.</p>
+                        <a href="{{ url_for('admin.change_course_name') }}" class="btn btn-warning">Change Course Name</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-4 mb-4">
+                <div class="card border-warning text-bg-dark">
+                    <h5 class="card-header">Generate Winner Certificates</h5>
+                    <div class="card-body">
+                        <p class="card-text">Generate winners Certificates and sent them emails</p>
+                        <a href="{{ url_for('admin.generate_winner_certificate') }}" class="btn btn-warning">Generate Winner Certificates</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-4 mb-4">
+                <div class="card border-warning text-bg-dark">
+                    <h5 class="card-header">Add Events</h5>
+                    <div class="card-body">
+                        <p class="card-text">Add literacy club events with ease</p>
+                        <a href="{{ url_for('admin.add_event') }}" class="btn btn-warning">Add Events</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-4 mb-4">
+                <div class="card border-warning text-bg-dark">
+                    <h5 class="card-header">Revoke Events</h5>
+                    <div class="card-body">
+                        <p class="card-text">Revoke events with ease</p>
+                        <a href="{{ url_for('admin.revoke_event') }}" class="btn btn-warning">Revoke Events</a>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
-
+</body>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
 </body>
 </html>

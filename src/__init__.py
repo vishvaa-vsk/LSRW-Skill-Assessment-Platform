@@ -5,6 +5,7 @@ from datetime import timedelta
 from .routes.main import main
 from .routes.admin import admin
 from .routes.teacher import teacher
+from .routes.events import events
 
 def create_app():
     """
@@ -28,6 +29,7 @@ def create_app():
     app.register_blueprint(main)
     app.register_blueprint(admin)
     app.register_blueprint(teacher)
+    app.register_blueprint(events)
 
     return app
 

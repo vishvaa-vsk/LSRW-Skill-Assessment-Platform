@@ -1,0 +1,34 @@
+{% extends "admin/base.html" %}
+{% block title %}VEC Literacy Club{% endblock %}
+
+{% block bodyContent %}
+    {% for message in get_flashed_messages() %}
+      {% if "successful" in message %}
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            {{message}}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+      {% else %}
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            {{message}}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+      {% endif %}
+    {% endfor %}
+    <div class="ModelBox shadow-lg p-3 mb-5 rounded-3">
+        <h3>Revoke Generation of Certificates</h3>
+        <form action="{{ url_for('admin.revoke_event') }}" method="POST">
+            
+            <div class="d-flex justify-content-sm-evenly">
+                <select class="form-select" name="event_name" id="event" required>
+                    <option disabled selected>Choose Event</option>
+                    {% for event in events %}
+                        <option value="{{event}}">{{event}}</option>
+                    {% endfor %}
+                </select>
+            </div>
+          <br>
+            <button type="submit" class="btn btn-lg btn-primary">Revoke Certificates</button>
+        </form>
+    </div>
+{% endblock %}
