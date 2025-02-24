@@ -9,7 +9,7 @@ events = Blueprint("events",__name__,url_prefix="/events")
 
 
 def generate_certificate(name,dept,event_name,regno):
-    template_path = os.path.join(os.path.abspath("src/static/"), "participation_certificate.png")
+    template_path = os.path.join(os.path.abspath("Quiz-App/src/static/"), "participation_certificate.png")
     template = cv2.imread(template_path)
     if template is None:
         raise FileNotFoundError(f"Template image not found at path: {template_path}")
