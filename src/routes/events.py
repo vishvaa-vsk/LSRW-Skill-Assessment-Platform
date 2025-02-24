@@ -1,5 +1,4 @@
 from flask import Blueprint,flash, jsonify, make_response,render_template, send_file,url_for,session,redirect,request
-from werkzeug.security import generate_password_hash,check_password_hash
 from ..extensions import mongo
 import cv2
 from datetime import datetime
