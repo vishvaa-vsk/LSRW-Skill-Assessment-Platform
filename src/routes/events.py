@@ -60,7 +60,7 @@ def events_home():
             return redirect(url_for("events.get_certificate",regno=regno,event=event_name))
     return render_template("events/index.html",events=events)
 
-@events.route("/get_certificate/<regno>")
+@events.route("/get_certificate/<event>/<regno>")
 def get_certificate(event,regno):
     path = os.path.join(os.path.abspath("Quiz-App/event_certificates/"),f"{event}_{regno}.png")
     return send_file(path,as_attachment=True)
