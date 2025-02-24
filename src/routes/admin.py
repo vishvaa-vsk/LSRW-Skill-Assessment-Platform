@@ -567,7 +567,7 @@ def change_course_name():
         return redirect(url_for("admin.login"))
     
 def winner_certificate(name,dept,event_name,regno,position):
-    template_path = os.path.join(os.path.abspath("src/static/"), "winners_certificate.png")
+    template_path = os.path.join(os.path.abspath("Quiz-App/src/static/"), "winners_certificate.png")
     template = cv2.imread(template_path)
     if template is None:
         raise FileNotFoundError(f"Template image not found at path: {template_path}")
@@ -608,7 +608,7 @@ def winner_certificate(name,dept,event_name,regno,position):
     font_scale = 0.8
     thickness = 2
     cv2.putText(template, current_date, (1169, 1074), font, font_scale, color, thickness, cv2.LINE_AA)
-    cv2.imwrite(os.path.join(os.path.abspath("event_certificates/"),f"{event_name}_winner_{regno}.png"),template)
+    cv2.imwrite(os.path.join(os.path.abspath("Quiz-App/event_certificates/"),f"{event_name}_winner_{regno}.png"),template)
 
 @admin.route("/generate_winner_certificate",methods=['GET', 'POST'])
 def generate_winner_certificate():
@@ -630,7 +630,7 @@ def generate_winner_certificate():
 @admin.route("/send_winner_certificate/<email>/<name>/<regno>/<event_name>",methods=['GET', 'POST'])
 def send_winner_certificate(email,name,regno,event_name):
     if check_login():
-        if os.path.isfile(os.path.join(os.path.abspath("event_certificates/"),f"{event_name}_winner_{regno}.png")):
+        if os.path.isfile(os.path.join(os.path.abspath("Quiz-App/event_certificates/"),f"{event_name}_winner_{regno}.png")):
             send_winner_email(email,name,event_name,regno)
             flash("Email sent successfully")
         return "Email sent successfully"
