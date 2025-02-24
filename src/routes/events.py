@@ -44,7 +44,7 @@ def generate_certificate(name,dept,event_name,regno):
     font_scale = 0.8
     thickness = 2
     cv2.putText(template, current_date, (1304, 1023), font, font_scale, color, thickness, cv2.LINE_AA)
-    cv2.imwrite(os.path.join(os.path.abspath("event_certificates/"),f"{regno}.png"),template)
+    cv2.imwrite(os.path.join(os.path.abspath("Quiz-App/event_certificates/"),f"{regno}.png"),template)
 
 
 @events.route("/",methods=["GET","POST"])
@@ -62,5 +62,5 @@ def events_home():
 
 @events.route("/get_certificate/<regno>")
 def get_certificate(event,regno):
-    path = os.path.join(os.path.abspath("event_certificates/"),f"{event}_{regno}.png")
+    path = os.path.join(os.path.abspath("Quiz-App/event_certificates/"),f"{event}_{regno}.png")
     return send_file(path,as_attachment=True)
