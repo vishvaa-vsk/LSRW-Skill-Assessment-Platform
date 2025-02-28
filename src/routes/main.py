@@ -486,7 +486,7 @@ def edit_details():
 
 @main.route("/git_update",methods=['POST'])
 def git_update():
-    repo = git.Repo("/home/testvec/Quiz-App")
+    repo = git.Repo("./Quiz-App")
     origin = repo.remotes.origin
     repo.create_head('main', origin.refs.main).set_tracking_branch(origin.refs.main).checkout()
     origin.pull()
