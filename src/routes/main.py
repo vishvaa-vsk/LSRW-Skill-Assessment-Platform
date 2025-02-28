@@ -7,6 +7,7 @@ from bson.objectid import ObjectId
 from ..send_email import send_reset_email
 import pdfkit
 from ..send_email import send_report
+import git
 
 main = Blueprint("main",__name__)
 
@@ -449,14 +450,6 @@ def generate_report(testCode,name,regno):
     else:
         return redirect(url_for('main.login'))
 
-# @main.route("/generate_certificate/<testCode>/<name>",methods=['GET','POST'])
-# def generate_certificate(testCode,name):
-#     pass
-#     if check_login():
-#         if mongo.db.users.find_one({"username":name}) and mongo.db[f"{testCode}-result"].find_one({'name':name}):
-#             testdetails = mongo.db.testDetails.find_one({"test_code":testCode})
-#             user_details = mongo.db.users.find_one({"username":name})
-#             user_test_report = mongo.db[f"{testCode}-result"].find_one({'name':name})
 
 @main.route("/get_user_details",methods=['GET', 'POST'])
 def get_user_details():
@@ -490,3 +483,11 @@ def edit_details():
         return render_template("edit_user_details.html",studName = session["username"])
     else:
         return redirect(url_for('main.login'))
+
+@main.route("/git_update",methods=['POST'])
+def git_update():
+    repo = git.Repo("/home/testvec/Quiz-App")
+    origin = repo.remotes.origin
+    repo.create_head('main', origin.refs.main).set_tracking_branch(origin.refs.main).checkout()
+    origin.pull()
+    return '', 200
