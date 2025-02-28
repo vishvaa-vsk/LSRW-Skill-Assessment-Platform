@@ -1,5 +1,4 @@
 from flask import Blueprint,flash, jsonify, make_response,render_template, send_file,url_for,session,redirect,request
-from werkzeug.security import generate_password_hash,check_password_hash
 from ..extensions import mongo
 import cv2
 from datetime import datetime
@@ -55,7 +54,7 @@ def events_home():
         event_name = request.form.get("event")
         if not mongo.db.event_info.find_one({"event_name":str(event_name)}):
             flash("Event does not exist")
-        else:
+        elif mongo.db.event_info.find_one({"event_name": str(event_name), "event_status":"active"}):
             generate_certificate(name,dept,event_name,regno)
             return redirect(url_for("events.get_certificate",regno=regno,event=event_name))
     return render_template("events/index.html",events=events)
