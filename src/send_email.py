@@ -59,11 +59,10 @@ The Communicative English Team
     thr.start()
     return thr
 
-def send_winner_email(userEmail,username,event_name,regno):
-    current_date = datetime.now().strftime("%d-%m-%Y")
+def send_winner_email(userEmail,username,event_name,regno,event_date):
     app = current_app._get_current_object()
     msg = Message(f"Winner of {event_name}",sender='testvec26@gmail.com',recipients=[userEmail],)
-    msg.body = f"""We sincerely thank you for your enthusiastic participation in the {event_name} organized by the Literary Club on {current_date}. Your engagement and contributions made the event a great success, and we truly appreciate your time and effort.
+    msg.body = f"""We sincerely thank you for your enthusiastic participation in the {event_name} organized by the Literary Club on {event_date}. Your engagement and contributions made the event a great success, and we truly appreciate your time and effort.
 
 As a token of our appreciation, please find attached your Participation Certificate. We hope you continue to take part in our future literary endeavors and share your creativity with us.   Best regards,
 A.Balaji, Assistant Professor of English,

@@ -566,7 +566,7 @@ def change_course_name():
     else:
         return redirect(url_for("admin.login"))
     
-def winner_certificate(name,dept,event_name,regno,position):
+def winner_certificate(name,dept,event_name,regno,position,event_date):
     template_path = os.path.join(os.path.abspath("Quiz-App/src/static/"), "winners_certificate.png")
     template = cv2.imread(template_path)
     if template is None:
@@ -604,10 +604,9 @@ def winner_certificate(name,dept,event_name,regno,position):
     color = (66, 154, 203)
     cv2.putText(template, event_name, (832,1070), font, font_scale, color, thickness, cv2.LINE_AA)
     # Date
-    current_date = datetime.now().strftime("%d-%m-%Y")
     font_scale = 0.8
     thickness = 2
-    cv2.putText(template, current_date, (1169, 1074), font, font_scale, color, thickness, cv2.LINE_AA)
+    cv2.putText(template, event_date, (1169, 1074), font, font_scale, color, thickness, cv2.LINE_AA)
     cv2.imwrite(os.path.join(os.path.abspath("Quiz-App/event_certificates/"),f"{event_name}_winner_{regno}.png"),template)
 
 @admin.route("/generate_winner_certificate",methods=['GET', 'POST'])
@@ -618,20 +617,25 @@ def generate_winner_certificate():
             name,dept,regno,email = request.form["name"],request.form["dept"],request.form["regno"],request.form["email"]
             event_name = request.form.get("event")
             position = request.form.get("position")
-            if not mongo.db.event_info.find_one({"event_name":str(event_name)}):
+            if not event_name in events:
                 flash("Event does not exist")
             else:
-                winner_certificate(name,dept,event_name,regno,position)
-                return redirect(url_for("admin.send_winner_certificate",email=email,name=name,regno=regno,event_name=event_name))
+                event_details = mongo.db.event_info.find_one({"event_name": event_name})
+                print(event_details)
+                event_date = event_details["event_date"]
+                event_date = datetime.strptime(event_date, "%Y-%m-%d").date()
+                winner_certificate(name,dept,event_name,regno,position,event_date)
+                return redirect(url_for("admin.send_winner_certificate",email=email,name=name,regno=regno,event_name=event_name,event_date=event_date.strftime("%d-%m-%Y")))
         return render_template("admin/generate_winner_certificate.html",events=events)
     else:
         return redirect(url_for("admin.login"))
     
-@admin.route("/send_winner_certificate/<email>/<name>/<regno>/<event_name>",methods=['GET', 'POST'])
-def send_winner_certificate(email,name,regno,event_name):
+@admin.route("/send_winner_certificate/<email>/<name>/<regno>/<event_name>/<event_date>",methods=['GET', 'POST'])
+def send_winner_certificate(email,name,regno,event_name,event_date):
     if check_login():
+        event_date = datetime.strptime(event_date, "%d-%m-%Y").date()
         if os.path.isfile(os.path.join(os.path.abspath("Quiz-App/event_certificates/"),f"{event_name}_winner_{regno}.png")):
-            send_winner_email(email,name,event_name,regno)
+            send_winner_email(email,name,event_name,regno,event_date)
             flash("Email sent successfully")
         return "Email sent successfully"
     else:
@@ -643,9 +647,10 @@ def add_event():
         if request.method == "POST":
             event_name = request.form.get("event_name")
             event_status = request.form.get("event_status")
+            event_date = request.form.get("event_date")
             status = "active" if event_status=="on" else "inactive"
             if not mongo.db.event_info.find_one({"event_name":str(event_name)}):
-                mongo.db.event_info.insert_one({"event_name":str(event_name),"event_status":str(status)})
+                mongo.db.event_info.insert_one({"event_name":str(event_name),"event_status":str(status),"event_date":event_date})
                 flash("Event added successfully")
             else:
                 flash("Event already exists!")
@@ -659,11 +664,17 @@ def revoke_event():
         events = [event["event_name"] for event in mongo.db.event_info.find({"event_status": "active"})]
         if request.method == "POST":
             event_name = request.form.get("event_name")
-            if mongo.db.event_info.find_one({"event_name": event_name, "event_status": "active"}):
-                mongo.db.event_info.update_one({"event_name": event_name}, {"$set": {"event_status": "inactive"}})
-                flash("Event revoked successfully")
+            event = mongo.db.event_info.find_one({"event_name": event_name, "event_status": "active"})
+            if event:
+                event_date = datetime.strptime(event["event_date"], "%Y-%m-%d").date()
+                current_date = datetime.now().date()
+                if event_date < current_date:
+                    mongo.db.event_info.update_one({"event_name": event_name}, {"$set": {"event_status": "inactive"}})
+                    flash("Event revoked successfully")
+                else:
+                    flash("Event not found or already inactive")
             else:
-                flash("Event not found or already inactive")
+                flash("Event not found or already inactive.")
         return render_template("admin/revoke_event.html", events=events)
     else:
-        return redirect(url_for("admin.login"))    
+        return redirect(url_for("admin.login"))

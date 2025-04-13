@@ -1,32 +1,66 @@
-{% extends "admin/base.html" %}
-{% block title %}VEC Literacy Club{% endblock %}
-
-{% block bodyContent %}
-    {% for message in get_flashed_messages() %}
-      {% if "successful" in message %}
-        <div class="alert alert-success alert-dismissible fade show" role="alert">
-            {{message}}
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-        </div>
-      {% else %}
-        <div class="alert alert-danger alert-dismissible fade show" role="alert">
-            {{message}}
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-        </div>
-      {% endif %}
-    {% endfor %}
-    <div class="ModelBox shadow-lg p-3 mb-5 rounded-3">
-        <h3>Add an club event</h3>
-        <form action="{{ url_for('admin.add_event') }}" method="POST">
-              <div class="form-floating mb-3">
-                <input type="text" class="form-control" name="event_name" id="floatingInput" placeholder="Your Name" required>
-                <label for="floatingInput">Event Name</label>
-              </div>
-              <div class="form-check form-switch">
-                <label class="form-check-label" for="flexSwitchCheckChecked">Event Status (is Active?)</label>
-                <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckChecked" name="event_status" checked>
-              </div>
-            <button type="submit" class="btn btn-lg btn-primary">Add Event</button>
-        </form>
+{% extends "admin/base.html" %} {% block title %}VEC Literacy Club{% endblock %}
+{% block bodyContent %} {% for message in get_flashed_messages() %} {% if
+"successful" in message %}
+<div class="alert alert-success alert-dismissible fade show" role="alert">
+  {{message}}
+  <button
+    type="button"
+    class="btn-close"
+    data-bs-dismiss="alert"
+    aria-label="Close"
+  ></button>
+</div>
+{% else %}
+<div class="alert alert-danger alert-dismissible fade show" role="alert">
+  {{message}}
+  <button
+    type="button"
+    class="btn-close"
+    data-bs-dismiss="alert"
+    aria-label="Close"
+  ></button>
+</div>
+{% endif %} {% endfor %}
+<div class="ModelBox shadow-lg p-3 mb-5 rounded-3">
+  <h3>Add an club event</h3>
+  <form action="{{ url_for('admin.add_event') }}" method="POST">
+    <div class="form-floating mb-3">
+      <input
+        type="text"
+        class="form-control"
+        name="event_name"
+        id="floatingInput"
+        placeholder="Your Name"
+        required
+      />
+      <label for="floatingInput">Event Name</label>
     </div>
+    <div class="form-floating mb-3">
+      <input
+        type="date"
+        class="form-control"
+        name="event_date"
+        id="eventDate"
+        required
+      />
+      <label for="eventDate">Event Date</label>
+    </div>
+    <div class="d-flex align-items-center mb-3">
+      <label class="form-check-label me-3" for="flexSwitchCheckChecked"
+        >Event Status (is Active?)</label
+      >
+      <div class="form-check form-switch">
+        <input
+          class="form-check-input"
+          type="checkbox"
+          role="switch"
+          id="flexSwitchCheckChecked"
+          name="event_status"
+          checked
+        />
+      </div>
+    </div>
+    <button type="submit" class="btn btn-lg btn-success">Add Event</button>
+  </form>
+</div>
 {% endblock %}
