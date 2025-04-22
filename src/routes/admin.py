@@ -606,7 +606,8 @@ def winner_certificate(name,dept,event_name,regno,position,event_date):
     # Date
     font_scale = 0.8
     thickness = 2
-    cv2.putText(template, event_date, (1169, 1074), font, font_scale, color, thickness, cv2.LINE_AA)
+    date = event_date.strftime("%d-%m-%Y") if hasattr(event_date, "strftime") else str(event_date)
+    cv2.putText(template, date, (1169, 1074), font, font_scale, color, thickness, cv2.LINE_AA)
     cv2.imwrite(os.path.join(os.path.abspath("Quiz-App/event_certificates/"),f"{event_name}_winner_{regno}.png"),template)
 
 @admin.route("/generate_winner_certificate",methods=['GET', 'POST'])
