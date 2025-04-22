@@ -622,7 +622,6 @@ def generate_winner_certificate():
                 flash("Event does not exist")
             else:
                 event_details = mongo.db.event_info.find_one({"event_name": event_name})
-                print(event_details)
                 event_date = event_details["event_date"]
                 event_date = datetime.strptime(event_date, "%Y-%m-%d").date()
                 winner_certificate(name,dept,event_name,regno,position,event_date)
