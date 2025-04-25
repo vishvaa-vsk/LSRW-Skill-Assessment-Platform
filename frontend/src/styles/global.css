@@ -64,7 +64,8 @@ body {
 }
 
 .ModelBox {
-  width: 400px;
+  width: 90%;
+  max-width: 500px;
   background: #fff;
   margin: 80px auto;
   padding: 25px;
@@ -110,6 +111,19 @@ body {
 .form-floating .form-control:focus {
   border-color: #86b7fe;
   box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+}
+
+/* Form select styling */
+.form-select {
+  background-position: right 0.75rem center;
+  background-size: 16px 12px;
+  appearance: none;
+}
+
+.form-select-lg {
+  font-size: 1rem;
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
 }
 
 /* Password visibility toggle */

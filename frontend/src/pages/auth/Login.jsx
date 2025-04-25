@@ -11,19 +11,52 @@ const Login = () => {
   });
   const [alert, setAlert] = useState({ message: "", variant: "" });
   const [showPassword, setShowPassword] = useState(false);
+  const [errors, setErrors] = useState({});
   const navigate = useNavigate();
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
+
+    // Clear validation errors when user types
+    if (errors[name]) {
+      setErrors({ ...errors, [name]: null });
+    }
   };
 
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
   };
 
+  const validateForm = () => {
+    const newErrors = {};
+
+    // Registration number validation
+    if (!formData.studRegno) {
+      newErrors.studRegno = "Registration number is required";
+    } else if (!/^[A-Za-z0-9\-]+$/.test(formData.studRegno)) {
+      newErrors.studRegno =
+        "Registration number can only contain letters, numbers, and hyphens";
+    }
+
+    // Password validation
+    if (!formData.studPass) {
+      newErrors.studPass = "Password is required";
+    } else if (formData.studPass.length < 6) {
+      newErrors.studPass = "Password must be at least 6 characters";
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0; // Return true if no errors
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    if (!validateForm()) {
+      return; // Stop submission if validation fails
+    }
+
     try {
       const response = await axios.post("/api/login", formData);
       if (response.data.success) {
@@ -79,8 +112,12 @@ const Login = () => {
               autoComplete="off"
               value={formData.studRegno}
               onChange={handleChange}
+              isInvalid={!!errors.studRegno}
             />
             <label htmlFor="floatingInput">Student Registration No</label>
+            <Form.Control.Feedback type="invalid">
+              {errors.studRegno}
+            </Form.Control.Feedback>
           </Form.Floating>
 
           <Form.Floating className="mb-3 password-field-container">
@@ -93,6 +130,7 @@ const Login = () => {
               autoComplete="off"
               value={formData.studPass}
               onChange={handleChange}
+              isInvalid={!!errors.studPass}
             />
             <label htmlFor="floatingPassword">Password</label>
             <span
@@ -103,6 +141,9 @@ const Login = () => {
                 className={showPassword ? "far fa-eye-slash" : "far fa-eye"}
               ></i>
             </span>
+            <Form.Control.Feedback type="invalid">
+              {errors.studPass}
+            </Form.Control.Feedback>
           </Form.Floating>
 
           <Button type="submit" size="lg" variant="success">
