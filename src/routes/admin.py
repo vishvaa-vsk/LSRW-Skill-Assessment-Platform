@@ -678,3 +678,36 @@ def revoke_event():
         return render_template("admin/revoke_event.html", events=events)
     else:
         return redirect(url_for("admin.login"))
+
+@admin.route("/manage_teachers", methods=['GET', 'POST'])
+def manage_teachers():
+    if check_login():
+        if request.method == "POST":
+            action = request.form.get("action")
+            
+            if action == "add":
+                teacher_name = request.form.get("teacher_name")
+                if teacher_name and teacher_name.strip():
+                    # Check if teacher already exists
+                    if not mongo.db.approved_teachers.find_one({"name": teacher_name}):
+                        mongo.db.approved_teachers.insert_one({"name": teacher_name, "created_at": datetime.now()})
+                        flash(f"Teacher '{teacher_name}' added successfully!")
+                    else:
+                        flash(f"Teacher '{teacher_name}' already exists!")
+                else:
+                    flash("Please enter a valid teacher name!")
+            
+            elif action == "remove":
+                teacher_id = request.form.get("teacher_id")
+                if teacher_id:
+                    result = mongo.db.approved_teachers.delete_one({"_id": ObjectId(teacher_id)})
+                    if result.deleted_count > 0:
+                        flash("Teacher removed successfully!")
+                    else:
+                        flash("Teacher not found!")
+        
+        # Get all approved teachers
+        teachers = list(mongo.db.approved_teachers.find().sort("name", 1))
+        return render_template("admin/manage_teachers.html", teachers=teachers)
+    else:
+        return redirect(url_for("admin.login"))

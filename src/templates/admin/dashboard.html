@@ -41,6 +41,9 @@
                 <a class="nav-link" href="{{ url_for('admin.show_questions') }}">View testcodes</a>
               </li>
               <li class="nav-item">
+                <a class="nav-link" href="{{ url_for('admin.manage_teachers') }}">Manage Teachers</a>
+              </li>
+              <li class="nav-item">
                 <a class="nav-link" href="{{ url_for('admin.technical_issues') }}">View technical issues</a>
               </li>
             </ul>
@@ -97,6 +100,15 @@
                     <div class="card-body">
                         <p class="card-text">View existing! <br><br> View existing testcode and its questions</p>
                         <a href="{{ url_for('admin.show_questions') }}" class="btn btn-warning">View testcodes</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-4 mb-4">
+                <div class="card border-warning text-bg-dark">
+                    <h5 class="card-header">Manage Teachers</h5>
+                    <div class="card-body">
+                        <p class="card-text">Add or remove teachers! <br><br> Manage the list of teachers who can register for the platform!</p>
+                        <a href="{{ url_for('admin.manage_teachers') }}" class="btn btn-warning">Manage Teachers</a>
                     </div>
                 </div>
             </div>

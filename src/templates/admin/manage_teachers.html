@@ -1,0 +1,107 @@
+{% extends "admin/admin_base.html" %} {% block title %}Manage Teachers{%
+endblock %} {% block bodyContent %}
+<div class="container mt-4">
+  <h2>Manage Teachers</h2>
+
+  <!-- Flash messages -->
+  {% for message in get_flashed_messages() %}
+  <div class="alert alert-info alert-dismissible fade show" role="alert">
+    {{ message }}
+    <button
+      type="button"
+      class="btn-close"
+      data-bs-dismiss="alert"
+      aria-label="Close"
+    ></button>
+  </div>
+  {% endfor %}
+
+  <!-- Add Teacher Form -->
+  <div class="card mb-4">
+    <div class="card-header">
+      <h4>Add New Teacher</h4>
+    </div>
+    <div class="card-body">
+      <form method="POST">
+        <input type="hidden" name="action" value="add" />
+        <div class="row">
+          <div class="col-md-8">
+            <div class="form-floating mb-3">
+              <input
+                type="text"
+                class="form-control"
+                name="teacher_name"
+                id="teacherName"
+                placeholder="Teacher Name"
+                required
+              />
+              <label for="teacherName">Teacher Name</label>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <button type="submit" class="btn btn-primary btn-lg">
+              Add Teacher
+            </button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Teachers List -->
+  <div class="card">
+    <div class="card-header">
+      <h4>Current Teachers ({{ teachers|length }})</h4>
+    </div>
+    <div class="card-body">
+      {% if teachers %}
+      <div class="table-responsive">
+        <table class="table table-striped">
+          <thead>
+            <tr>
+              <th>Teacher Name</th>
+              <th>Added Date</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for teacher in teachers %}
+            <tr>
+              <td>{{ teacher.name }}</td>
+              <td>
+                {% if teacher.created_at %} {{
+                teacher.created_at.strftime('%Y-%m-%d %H:%M') }} {% else %} - {%
+                endif %}
+              </td>
+              <td>
+                <form method="POST" style="display: inline">
+                  <input type="hidden" name="action" value="remove" />
+                  <input
+                    type="hidden"
+                    name="teacher_id"
+                    value="{{ teacher._id }}"
+                  />
+                  <button
+                    type="submit"
+                    class="btn btn-danger btn-sm"
+                    onclick="return confirm('Are you sure you want to remove this teacher?')"
+                  >
+                    <i class="bi bi-trash"></i> Remove
+                  </button>
+                </form>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      {% else %}
+      <div class="alert alert-warning" role="alert">
+        <i class="bi bi-exclamation-triangle"></i> No teachers found. Add some
+        teachers to get started.
+      </div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+{% endblock %}

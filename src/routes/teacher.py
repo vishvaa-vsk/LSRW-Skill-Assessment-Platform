@@ -36,8 +36,17 @@ def login():
 
 @teacher.route("/signup",methods=['GET', 'POST'])
 def signup():
+    # Get list of approved teachers from database
+    approved_teachers = list(mongo.db.approved_teachers.find().sort("name", 1))
+    
     if request.method == "POST":
         username,email,passwd,repasswd = request.form.get("teacherName"),request.form['teacherEmail'],request.form['teacherPass'],request.form['teacherRePass']
+        
+        # Check if the selected teacher name is in the approved list
+        if not mongo.db.approved_teachers.find_one({"name": username}):
+            flash("Invalid teacher name selected!")
+            return render_template("teacher/signup.html", approved_teachers=approved_teachers)
+        
         user = mongo.db.users
         if not user.find_one({'username':username}) and not user.find_one({'email':email}):
             if not mongo.db.teachers.find_one({"username":username}):
@@ -58,7 +67,7 @@ def signup():
                 flash("User is already exists")
         else:
             flash("You are a student, you can't be a teacher!")
-    return render_template("teacher/signup.html")
+    return render_template("teacher/signup.html", approved_teachers=approved_teachers)
 
 @teacher.route('/reset_request',methods=['GET', 'POST'])
 def reset_request():
