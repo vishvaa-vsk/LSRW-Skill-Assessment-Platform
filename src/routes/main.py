@@ -476,11 +476,22 @@ def edit_details():
     redirects to the login page if the user is not logged in.
     """
     if check_login():
+        # Get list of approved teachers from database
+        approved_teachers = list(mongo.db.approved_teachers.find().sort("name", 1))
+        
         if request.method == "POST":
             user_id = session.get("user_id")
             username,regno,Class,email,teacher = request.form["studName"],request.form["studRegno"],request.form["studClass"].upper(),request.form["studEmail"],request.form.get("teacherName")
+            
+            # Validate that the selected teacher is in the approved list
+            if teacher and not mongo.db.approved_teachers.find_one({"name": teacher}):
+                flash("Invalid teacher name selected!")
+                return render_template("edit_user_details.html", studName=session["username"], approved_teachers=approved_teachers)
+            
             mongo.db.users.update_one({"_id":ObjectId(user_id)},{"$set":{"username":username,"regno":regno,"class":Class,"email":email,"teacher":teacher}})
-        return render_template("edit_user_details.html",studName = session["username"])
+            flash("Details updated successfully!")
+            
+        return render_template("edit_user_details.html", studName=session["username"], approved_teachers=approved_teachers)
     else:
         return redirect(url_for('main.login'))
 
