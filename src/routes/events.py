@@ -53,7 +53,12 @@ def events_home():
         if not mongo.db.event_info.find_one({"event_name":str(event_name)}):
             flash("Event does not exist")
         elif mongo.db.event_info.find_one({"event_name": str(event_name), "event_status":"active"}):
-            event_date = mongo.db.event_info.find_one({"event_name": str(event_name), "event_status":"active"})["event_date"]
+            event_info = mongo.db.event_info.find_one({"event_name": str(event_name), "event_status":"active"})["event_date"]
+            winners = event_info.get("winners", [])
+            if regno in winners:
+                flash("You are a winner of this event! Winners cannot download participation certificates. Contact admin for winner certificate.")
+                return redirect(url_for("events.events_home"))
+            event_date = event_info["event_date"]
             event_date = datetime.strptime(event_date, "%Y-%m-%d").date()
             generate_certificate(name,dept,event_name,regno,event_date.strftime("%d-%m-%Y"))
             return redirect(url_for("events.get_certificate",regno=regno,event=event_name))

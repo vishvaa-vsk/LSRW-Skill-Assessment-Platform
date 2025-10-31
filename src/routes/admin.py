@@ -625,6 +625,12 @@ def generate_winner_certificate():
                 event_date = event_details["event_date"]
                 event_date = datetime.strptime(event_date, "%Y-%m-%d").date()
                 winner_certificate(name,dept,event_name,regno,position,event_date)
+
+                mongo.db.event_info.update_one(
+                    {"event_name": event_name},
+                    {"$addToSet": {"winners": regno}}
+                )
+
                 return redirect(url_for("admin.send_winner_certificate",email=email,name=name,regno=regno,event_name=event_name,event_date=event_date.strftime("%d-%m-%Y")))
         return render_template("admin/generate_winner_certificate.html",events=events)
     else:
@@ -650,7 +656,10 @@ def add_event():
             event_date = request.form.get("event_date")
             status = "active" if event_status=="on" else "inactive"
             if not mongo.db.event_info.find_one({"event_name":str(event_name)}):
-                mongo.db.event_info.insert_one({"event_name":str(event_name),"event_status":str(status),"event_date":event_date})
+                mongo.db.event_info.insert_one({"event_name":str(event_name),
+                                                "event_status":str(status),
+                                                "event_date":event_date, 
+                                                "winners": []})
                 flash("Event added successfully")
             else:
                 flash("Event already exists!")
