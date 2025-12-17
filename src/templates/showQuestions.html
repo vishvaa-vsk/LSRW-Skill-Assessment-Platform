@@ -7,6 +7,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
 
     <link rel="stylesheet" href="{{ url_for('static',filename='quesitons.css') }}">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 <body>
   {% with messages = get_flashed_messages(with_categories=true) %}
@@ -74,99 +75,113 @@
 
 
 <script>
+    let isTimeUp = false;
+
     function startTimer(duration, display) {
-    var timer = duration, minutes, seconds;
-    var counter = setInterval(function () {
-        minutes = parseInt(timer / 60, 10);
-        seconds = parseInt(timer % 60, 10);
+        var timer = duration, minutes, seconds;
+        var counter = setInterval(function () {
+            minutes = parseInt(timer / 60, 10);
+            seconds = parseInt(timer % 60, 10);
 
-        minutes = minutes < 10 ? "0" + minutes : minutes;
-        seconds = seconds < 10 ? "0" + seconds : seconds;
+            minutes = minutes < 10 ? "0" + minutes : minutes;
+            seconds = seconds < 10 ? "0" + seconds : seconds;
 
-        display.textContent = minutes + ":" + seconds;
+            display.textContent = minutes + ":" + seconds;
 
-        if (--timer < 0) {
-            timer = duration;
-            function enable_disable(){
-                // not("#sumbitButton")
-                $("#Quiz :input").prop("disabled",true);
-            };
-            enable_disable();
-            clearInterval(counter);
-            
-            // Block submit button and show time-up message with redirect countdown
-            var submitButton = document.getElementById('sumbitButton');
-            if (submitButton) {
-                submitButton.disabled = true;
+            if (--timer < 0) {
+                isTimeUp = true;
+                clearInterval(counter);
+                
+                // Disable all form inputs
+                $("#Quiz :input").prop("disabled", true);
+                
+                // Disable submit button
+                var submitButton = document.getElementById('sumbitButton');
+                if (submitButton) {
+                    submitButton.disabled = true;
+                    submitButton.style.opacity = "0.5";
+                    submitButton.style.cursor = "not-allowed";
+                }
+                
+                // Disable audio play button
+                var playButton = document.getElementById('playButton');
+                if (playButton) {
+                    playButton.disabled = true;
+                    playButton.style.opacity = "0.5";
+                    playButton.style.cursor = "not-allowed";
+                }
+                
+                var alertMessage = "⏱️ TIME UP!\n\nYour test has been locked.\n\nRedirecting to dashboard in 3 seconds...";
+                alert(alertMessage);
+                
+                // Redirect to dashboard after 3 seconds
+                setTimeout(function() {
+                    window.location.href = "{{ url_for('main.dashboard') }}";
+                }, 3000);
             }
-            
-            var alertMessage = "Time Up! Your test has been locked. Redirecting you to dashboard in 3 seconds...";
-            alert(alertMessage);
-            
-            // Redirect to dashboard after 3 seconds
-            setTimeout(function() {
-                window.location.href = "{{ url_for('main.dashboard') }}";
-            }, 3000);
-        }
 
-        if(minutes < 1){
-            display.style.color = 'red'
-        }
-    }, 1000);
-}
-
-
-function progressBar(minutes){
-    value = 100;
-    sec = minutes*60;
-    sub = sec/100;
-    var progress = setInterval(function(){
-        value--;
-        document.querySelector(".progress-bar").style.width= `${value}%`;
-        if(document.querySelector(".progress-bar").style.width == "10%"){
-            document.querySelector(".progress-bar").classList.remove("bg-success");
-            document.querySelector(".progress-bar").classList.add("bg-danger");
-        }
-    },1000);
-    if (value <= 0){
-        clearInterval(progress);
+            if(minutes < 1){
+                display.style.color = 'red'
+            }
+        }, 1000);
     }
-}
 
-document.addEventListener("DOMContentLoaded", function() {
-    var playButton = document.getElementById('playButton');
-    var audioPlayer = document.getElementById('audioPlayer');
-    var counterElement = document.getElementById('Counter');
-    var remainingPlays = 2;
 
-    playButton.addEventListener('click', function() {
-      if (remainingPlays > 0) {
-        audioPlayer.play();
-        remainingPlays--;
-        counterElement.textContent = 'Remaining Plays: ' + remainingPlays;
+    function progressBar(minutes){
+        value = 100;
+        sec = minutes*60;
+        sub = sec/100;
+        var progress = setInterval(function(){
+            value--;
+            document.querySelector(".progress-bar").style.width= `${value}%`;
+            if(document.querySelector(".progress-bar").style.width == "10%"){
+                document.querySelector(".progress-bar").classList.remove("bg-success");
+                document.querySelector(".progress-bar").classList.add("bg-danger");
+            }
+        },1000);
+        if (value <= 0){
+            clearInterval(progress);
+        }
+    }
 
-        // Listen for the 'ended' event to know when the audio has finished playing
-        audioPlayer.addEventListener('ended', function() {
-          // Allow another play after the audio has fully completed
-          playButton.disabled = false;
+    document.addEventListener("DOMContentLoaded", function() {
+        var playButton = document.getElementById('playButton');
+        var audioPlayer = document.getElementById('audioPlayer');
+        var counterElement = document.getElementById('Counter');
+        var remainingPlays = 2;
+
+        playButton.addEventListener('click', function() {
+          if (isTimeUp) {
+              alert("Test time has ended!");
+              return;
+          }
+          if (remainingPlays > 0) {
+            audioPlayer.play();
+            remainingPlays--;
+            counterElement.textContent = 'Remaining Plays: ' + remainingPlays;
+
+            // Listen for the 'ended' event to know when the audio has finished playing
+            audioPlayer.addEventListener('ended', function() {
+              // Allow another play after the audio has fully completed
+              playButton.disabled = false;
+            });
+
+            // Disable the button to prevent interruption while the audio is playing
+            playButton.disabled = true;
+          } else {
+            alert('No more plays remaining!');
+            playButton.disabled = true;
+          }
         });
+      });
 
-        // Disable the button to prevent interruption while the audio is playing
-        playButton.disabled = true;
-      } else {
-        alert('No more plays remaining!');
-        playButton.disabled = true;
-      }
-    });
-  });
-
-window.onload = function () {
-    var fiveMinutes = 60 * parseFloat("{{time}}");
-    display = document.getElementById('counter');
-    Minutes = 10;
-    startTimer(fiveMinutes, display);
-    progressBar(Minutes);
-};
+    window.onload = function () {
+        var fiveMinutes = 60 * parseFloat("{{time}}");
+        display = document.getElementById('counter');
+        Minutes = 10;
+        startTimer(fiveMinutes, display);
+        progressBar(Minutes);
+    };
 </script>
 
 
