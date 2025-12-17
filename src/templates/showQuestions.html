@@ -93,7 +93,20 @@
             };
             enable_disable();
             clearInterval(counter);
-            alert("Time Up!")
+            
+            // Block submit button and show time-up message with redirect countdown
+            var submitButton = document.getElementById('sumbitButton');
+            if (submitButton) {
+                submitButton.disabled = true;
+            }
+            
+            var alertMessage = "Time Up! Your test has been locked. Redirecting you to dashboard in 3 seconds...";
+            alert(alertMessage);
+            
+            // Redirect to dashboard after 3 seconds
+            setTimeout(function() {
+                window.location.href = "{{ url_for('main.dashboard') }}";
+            }, 3000);
         }
 
         if(minutes < 1){
